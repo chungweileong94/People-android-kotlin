@@ -11,6 +11,8 @@ class ContactActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_contact)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        title = intent?.getBundleExtra("contact")?.getString("name")
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

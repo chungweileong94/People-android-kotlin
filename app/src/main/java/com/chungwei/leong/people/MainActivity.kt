@@ -3,10 +3,12 @@ package com.chungwei.leong.people
 import android.content.Intent
 import android.database.Cursor
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import com.chungwei.leong.people.adapters.MainViewPagerAdapter
 import com.chungwei.leong.people.fragments.ContactsFragment
+import com.chungwei.leong.people.utils.getStringValue
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), ContactsFragment.OnContactItemClickListener {
@@ -46,7 +48,12 @@ class MainActivity : AppCompatActivity(), ContactsFragment.OnContactItemClickLis
     }
 
     override fun onContactItemClicked(cursor: Cursor, position: Int) {
+        cursor.moveToPosition(position)
+        val bundle = Bundle()
+        bundle.putString("name", cursor.getStringValue(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY))
+
         val intent = Intent(this, ContactActivity::class.java)
+        intent.putExtra("contact", bundle)
         startActivity(intent)
     }
 }
