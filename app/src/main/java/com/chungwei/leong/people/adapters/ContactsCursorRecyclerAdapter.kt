@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.chungwei.leong.people.R
+import com.chungwei.leong.people.helpers.getStringValue
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
 import kotlinx.android.synthetic.main.contact_list_item.view.*
 
@@ -27,19 +28,21 @@ class ContactsCursorRecyclerAdapter(private val context: Context, private val cu
 
     class ViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
         fun bind(cursor: Cursor) {
-            itemView.nameTextView.text = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY))
+            itemView.nameTextView.text = cursor.getStringValue(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY)
 
             try {
-                val profileImageUri = Uri.parse(cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.PHOTO_THUMBNAIL_URI)))
+                val profileImageUri = Uri.parse(cursor.getStringValue(ContactsContract.Contacts.PHOTO_THUMBNAIL_URI))
                 Glide.with(itemView).load(profileImageUri).into(itemView.profileImageView)
             } catch (e: Exception) {
-                Glide.with(itemView).load(R.drawable.ic_person_outline_gray_24dp).into(itemView.profileImageView)
+                Glide.with(itemView).load(R.drawable.ic_person_24dp).into(itemView.profileImageView)
             }
         }
+
+
     }
 
     override fun getSectionName(position: Int): String {
         cursor.moveToPosition(position)
-        return cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY)).substring(0, 1).toUpperCase()
+        return cursor.getStringValue(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY).substring(0, 1).toUpperCase()
     }
 }
