@@ -10,7 +10,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var mViewPagerAdapter: MainViewPagerAdapter
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -28,7 +27,7 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        bottomNavigationView.setOnNavigationItemSelectedListener({ item ->
+        bottomNavigationView.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.menu_item_contacts -> {
                     viewPager.currentItem = 0
@@ -40,6 +39,6 @@ class MainActivity : AppCompatActivity() {
                 }
                 else -> false
             }
-        })
+        }
     }
 }
