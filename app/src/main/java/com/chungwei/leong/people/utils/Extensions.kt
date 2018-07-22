@@ -1,4 +1,4 @@
-package com.chungwei.leong.people.helpers
+package com.chungwei.leong.people.utils
 
 import android.database.Cursor
 

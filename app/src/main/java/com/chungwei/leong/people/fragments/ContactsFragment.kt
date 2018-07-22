@@ -2,6 +2,7 @@ package com.chungwei.leong.people.fragments
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.pm.PackageManager
 import android.database.Cursor
 import android.os.AsyncTask
@@ -14,13 +15,30 @@ import android.support.v7.widget.SearchView
 import android.view.*
 import com.chungwei.leong.people.R
 import com.chungwei.leong.people.adapters.ContactsCursorRecyclerAdapter
-import com.chungwei.leong.people.helpers.PermissionRequestCode
+import com.chungwei.leong.people.utils.PermissionRequestCode
+import com.chungwei.leong.people.utils.RecyclerViewClickListener
 import kotlinx.android.synthetic.main.fragment_contacts.*
 import kotlinx.android.synthetic.main.fragment_contacts.view.*
 
 class ContactsFragment : Fragment() {
 
     private val mContactAsyncTask = ContactsAsyncTask()
+
+    private lateinit var mContactItemClickCallback: OnContactItemClickListener
+
+    interface OnContactItemClickListener {
+        fun onContactItemClicked(cursor: Cursor, position: Int)
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+        try {
+            mContactItemClickCallback = context as OnContactItemClickListener
+        } catch (e: ClassCastException) {
+            throw ClassCastException("$context must be implement OnContactItemClickListener")
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_contacts, container, false)
@@ -57,9 +75,9 @@ class ContactsFragment : Fragment() {
         }
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
-        inflater?.inflate(R.menu.main_menu, menu)
-        val searchView = menu?.findItem(R.id.appBarSearch)?.actionView as SearchView?
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.main_menu, menu)
+        val searchView = menu.findItem(R.id.appBarSearch)?.actionView as SearchView?
 
         searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean = true
@@ -98,7 +116,9 @@ class ContactsFragment : Fragment() {
             super.onPostExecute(result)
 
             if (result != null) {
-                contactsRecyclerView.adapter = ContactsCursorRecyclerAdapter(context!!, result)
+                contactsRecyclerView.adapter = ContactsCursorRecyclerAdapter(context!!, result, object : RecyclerViewClickListener {
+                    override fun onItemClick(view: View, position: Int) = mContactItemClickCallback.onContactItemClicked(result, position)
+                })
             }
         }
     }

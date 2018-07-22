@@ -1,12 +1,15 @@
 package com.chungwei.leong.people
 
+import android.content.Intent
+import android.database.Cursor
 import android.os.Bundle
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import com.chungwei.leong.people.adapters.MainViewPagerAdapter
+import com.chungwei.leong.people.fragments.ContactsFragment
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ContactsFragment.OnContactItemClickListener {
 
     private lateinit var mViewPagerAdapter: MainViewPagerAdapter
 
@@ -40,5 +43,10 @@ class MainActivity : AppCompatActivity() {
                 else -> false
             }
         }
+    }
+
+    override fun onContactItemClicked(cursor: Cursor, position: Int) {
+        val intent = Intent(this, ContactActivity::class.java)
+        startActivity(intent)
     }
 }

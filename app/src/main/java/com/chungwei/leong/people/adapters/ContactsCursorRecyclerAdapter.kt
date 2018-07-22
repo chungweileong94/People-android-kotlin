@@ -10,14 +10,15 @@ import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.chungwei.leong.people.R
-import com.chungwei.leong.people.helpers.getStringValue
+import com.chungwei.leong.people.utils.RecyclerViewClickListener
+import com.chungwei.leong.people.utils.getStringValue
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
 import kotlinx.android.synthetic.main.contact_list_item.view.*
 
-class ContactsCursorRecyclerAdapter(private val context: Context, private val cursor: Cursor) : RecyclerView.Adapter<ContactsCursorRecyclerAdapter.ViewHolder>(), FastScrollRecyclerView.SectionedAdapter {
+class ContactsCursorRecyclerAdapter(private val context: Context, private val cursor: Cursor, private val clickListener: RecyclerViewClickListener) : RecyclerView.Adapter<ContactsCursorRecyclerAdapter.ViewHolder>(), FastScrollRecyclerView.SectionedAdapter {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
-            ViewHolder(LayoutInflater.from(context).inflate(R.layout.contact_list_item, parent, false))
+            ViewHolder(LayoutInflater.from(context).inflate(R.layout.contact_list_item, parent, false), clickListener)
 
     override fun getItemCount(): Int = cursor.count
 
@@ -26,7 +27,7 @@ class ContactsCursorRecyclerAdapter(private val context: Context, private val cu
         holder.bind(cursor)
     }
 
-    class ViewHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
+    class ViewHolder(itemView: View?, private val clickListener: RecyclerViewClickListener) : RecyclerView.ViewHolder(itemView) {
         fun bind(cursor: Cursor) {
             itemView.nameTextView.text = cursor.getStringValue(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY)
 
@@ -36,9 +37,9 @@ class ContactsCursorRecyclerAdapter(private val context: Context, private val cu
             } catch (e: Exception) {
                 Glide.with(itemView).load(R.drawable.ic_person_24dp).into(itemView.profileImageView)
             }
+
+            itemView.setOnClickListener { v -> clickListener.onItemClick(v, adapterPosition) }
         }
-
-
     }
 
     override fun getSectionName(position: Int): String {
