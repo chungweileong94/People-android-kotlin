@@ -10,15 +10,14 @@ import android.view.View
 import android.view.ViewGroup
 import com.bumptech.glide.Glide
 import com.chungwei.leong.people.R
-import com.chungwei.leong.people.utils.RecyclerViewClickListener
 import com.chungwei.leong.people.utils.getStringValue
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
 import kotlinx.android.synthetic.main.contact_list_item.view.*
 
-class ContactsCursorRecyclerAdapter(private val context: Context, private val cursor: Cursor, private val clickListener: RecyclerViewClickListener) : RecyclerView.Adapter<ContactsCursorRecyclerAdapter.ViewHolder>(), FastScrollRecyclerView.SectionedAdapter {
+class ContactsCursorRecyclerAdapter(private val context: Context, private val cursor: Cursor, private val onClickListener: (Int) -> Unit) : RecyclerView.Adapter<ContactsCursorRecyclerAdapter.ViewHolder>(), FastScrollRecyclerView.SectionedAdapter {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
-            ViewHolder(LayoutInflater.from(context).inflate(R.layout.contact_list_item, parent, false), clickListener)
+            ViewHolder(LayoutInflater.from(context).inflate(R.layout.contact_list_item, parent, false), onClickListener)
 
     override fun getItemCount(): Int = cursor.count
 
@@ -27,7 +26,12 @@ class ContactsCursorRecyclerAdapter(private val context: Context, private val cu
         holder.bind(cursor)
     }
 
-    class ViewHolder(itemView: View?, private val clickListener: RecyclerViewClickListener) : RecyclerView.ViewHolder(itemView) {
+    override fun getSectionName(position: Int): String {
+        cursor.moveToPosition(position)
+        return cursor.getStringValue(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY).substring(0, 1).toUpperCase()
+    }
+
+    class ViewHolder(itemView: View?, private val onClickListener: (Int) -> Unit) : RecyclerView.ViewHolder(itemView) {
         fun bind(cursor: Cursor) {
             itemView.nameTextView.text = cursor.getStringValue(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY)
 
@@ -38,12 +42,7 @@ class ContactsCursorRecyclerAdapter(private val context: Context, private val cu
                 Glide.with(itemView).load(R.drawable.ic_person_24dp).into(itemView.profileImageView)
             }
 
-            itemView.setOnClickListener { v -> clickListener.onItemClick(v, adapterPosition) }
+            itemView.setOnClickListener { onClickListener(adapterPosition) }
         }
-    }
-
-    override fun getSectionName(position: Int): String {
-        cursor.moveToPosition(position)
-        return cursor.getStringValue(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY).substring(0, 1).toUpperCase()
     }
 }

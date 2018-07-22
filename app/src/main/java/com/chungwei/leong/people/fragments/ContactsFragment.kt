@@ -16,7 +16,6 @@ import android.view.*
 import com.chungwei.leong.people.R
 import com.chungwei.leong.people.adapters.ContactsCursorRecyclerAdapter
 import com.chungwei.leong.people.utils.PermissionRequestCode
-import com.chungwei.leong.people.utils.RecyclerViewClickListener
 import kotlinx.android.synthetic.main.fragment_contacts.*
 import kotlinx.android.synthetic.main.fragment_contacts.view.*
 
@@ -42,10 +41,10 @@ class ContactsFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_contacts, container, false)
-        setHasOptionsMenu(true)
-
         view.contactsRecyclerView.layoutManager = LinearLayoutManager(context!!)
         view.contactsRecyclerView.setHasFixedSize(true)
+
+        setHasOptionsMenu(true)
 
         return view
     }
@@ -68,10 +67,11 @@ class ContactsFragment : Fragment() {
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
-        if (requestCode == PermissionRequestCode.READ_CONTACT.code) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                getContacts()
-            }
+        when (requestCode) {
+            PermissionRequestCode.READ_CONTACT.code ->
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    getContacts()
+                }
         }
     }
 
@@ -81,7 +81,6 @@ class ContactsFragment : Fragment() {
 
         searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean = true
-
             override fun onQueryTextChange(newText: String?): Boolean = getContacts(newText.toString())
         })
     }
@@ -116,9 +115,9 @@ class ContactsFragment : Fragment() {
             super.onPostExecute(result)
 
             if (result != null) {
-                contactsRecyclerView.adapter = ContactsCursorRecyclerAdapter(context!!, result, object : RecyclerViewClickListener {
-                    override fun onItemClick(view: View, position: Int) = mContactItemClickCallback.onContactItemClicked(result, position)
-                })
+                contactsRecyclerView.adapter = ContactsCursorRecyclerAdapter(context!!, result) { position ->
+                    mContactItemClickCallback.onContactItemClicked(result, position)
+                }
             }
         }
     }
