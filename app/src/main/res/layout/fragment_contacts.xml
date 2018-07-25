@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:fastScrollAutoHide="true"
-        app:fastScrollAutoHideDelay="500"
-        app:fastScrollPopupBgColor="@color/colorAccent"
-        app:fastScrollThumbColor="@color/colorAccent" />
+        app:fastScrollAutoHideDelay="200"
+        app:fastScrollPopupBgColor="@color/colorPrimary"
+        app:fastScrollThumbColor="@color/colorPrimary" />
 </android.support.constraint.ConstraintLayout>
