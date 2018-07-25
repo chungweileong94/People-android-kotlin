@@ -18,6 +18,7 @@ class MainActivity : AppCompatActivity(), ContactsFragment.OnContactItemClickLis
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        setSupportActionBar(mainToolbar)
 
         mViewPagerAdapter = MainViewPagerAdapter(supportFragmentManager)
         viewPager.adapter = mViewPagerAdapter
@@ -28,11 +29,11 @@ class MainActivity : AppCompatActivity(), ContactsFragment.OnContactItemClickLis
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
 
             override fun onPageSelected(position: Int) {
-                bottomNavigationView.selectedItemId = bottomNavigationView.menu.getItem(position).itemId
+                mainBottomNavigationView.selectedItemId = mainBottomNavigationView.menu.getItem(position).itemId
             }
         })
 
-        bottomNavigationView.setOnNavigationItemSelectedListener { item ->
+        mainBottomNavigationView.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.menu_item_contacts -> {
                     viewPager.currentItem = 0
@@ -50,7 +51,9 @@ class MainActivity : AppCompatActivity(), ContactsFragment.OnContactItemClickLis
     override fun onContactItemClicked(cursor: Cursor, position: Int) {
         cursor.moveToPosition(position)
         val bundle = Bundle()
+        bundle.putString("lookup_key", cursor.getStringValue(ContactsContract.Contacts.LOOKUP_KEY))
         bundle.putString("name", cursor.getStringValue(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY))
+        bundle.putString("photo_uri", cursor.getStringValue(ContactsContract.Contacts.PHOTO_THUMBNAIL_URI))
 
         val intent = Intent(this, ContactActivity::class.java)
         intent.putExtra("contact", bundle)

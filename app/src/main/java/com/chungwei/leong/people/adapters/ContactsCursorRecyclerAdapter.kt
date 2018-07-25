@@ -28,19 +28,17 @@ class ContactsCursorRecyclerAdapter(private val context: Context, private val cu
 
     override fun getSectionName(position: Int): String {
         cursor.moveToPosition(position)
-        return cursor.getStringValue(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY).substring(0, 1).toUpperCase()
+        return cursor.getStringValue(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY)!!.substring(0, 1).toUpperCase()
     }
 
     class ViewHolder(itemView: View?, private val onClickListener: (Int) -> Unit) : RecyclerView.ViewHolder(itemView) {
         fun bind(cursor: Cursor) {
             itemView.nameTextView.text = cursor.getStringValue(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY)
 
-            try {
-                val profileImageUri = Uri.parse(cursor.getStringValue(ContactsContract.Contacts.PHOTO_THUMBNAIL_URI))
-                Glide.with(itemView).load(profileImageUri).into(itemView.profileImageView)
-            } catch (e: Exception) {
-                Glide.with(itemView).load(R.drawable.ic_person_24dp).into(itemView.profileImageView)
-            }
+            val photoUriString = cursor.getStringValue(ContactsContract.Contacts.PHOTO_THUMBNAIL_URI)
+            Glide.with(itemView)
+                    .load(if (photoUriString.isNullOrEmpty()) R.drawable.ic_person_120dp else Uri.parse(photoUriString))
+                    .into(itemView.profileImageView)
 
             itemView.setOnClickListener { onClickListener(adapterPosition) }
         }
