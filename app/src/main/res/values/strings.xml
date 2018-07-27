@@ -3,7 +3,7 @@
     <string name="contacts">Contacts</string>
     <string name="favorites">Favorites</string>
     <string name="search">Search</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="transition_name">transition_name</string>
+    <string name="transition_profile_image">transition_profile_image</string>
+    <string name="profile_image">Profile Image</string>
 </resources>

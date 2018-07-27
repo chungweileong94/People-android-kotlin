@@ -26,7 +26,7 @@ class ContactsFragment : Fragment() {
     private lateinit var mContactItemClickCallback: OnContactItemClickListener
 
     interface OnContactItemClickListener {
-        fun onContactItemClicked(cursor: Cursor, position: Int)
+        fun onContactItemClicked(cursor: Cursor, view: View, position: Int)
     }
 
     override fun onAttach(context: Context) {
@@ -98,6 +98,7 @@ class ContactsFragment : Fragment() {
                 ContactsContract.Contacts._ID,
                 ContactsContract.Contacts.LOOKUP_KEY,
                 ContactsContract.Contacts.DISPLAY_NAME_PRIMARY,
+                ContactsContract.Contacts.PHOTO_URI,
                 ContactsContract.Contacts.PHOTO_THUMBNAIL_URI)
         private val mSelection = "${ContactsContract.Contacts.DISPLAY_NAME_PRIMARY} LIKE ?"
         private var mSortOrder = "${ContactsContract.Contacts.DISPLAY_NAME_PRIMARY} ASC"
@@ -115,8 +116,8 @@ class ContactsFragment : Fragment() {
             super.onPostExecute(result)
 
             if (result != null) {
-                contactsRecyclerView.adapter = ContactsCursorRecyclerAdapter(context!!, result) { position ->
-                    mContactItemClickCallback.onContactItemClicked(result, position)
+                contactsRecyclerView.adapter = ContactsCursorRecyclerAdapter(context!!, result) { view, position ->
+                    mContactItemClickCallback.onContactItemClicked(result, view, position)
                 }
             }
         }

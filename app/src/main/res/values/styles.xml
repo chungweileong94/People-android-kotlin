@@ -6,12 +6,14 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:colorControlNormal">@color/colorPrimary</item>
+        <item name="android:windowActivityTransitions">true</item>
     </style>
 
-    <style name="AppActionBar" parent="ThemeOverlay.AppCompat.ActionBar">
-        <item name="android:colorControlNormal">@color/colorPrimary</item>
-        <item name="android:background">@color/white</item>
+    <style name="AppActionBar" parent="AppTheme">
+        <item name="searchViewStyle">@style/Widget.AppCompat.SearchView.ActionBar</item>
+        <item name="colorPrimary">@color/white</item>
+        <item name="android:textColorPrimary">@color/colorPrimary</item>
+        <item name="android:textColorSecondary">@color/colorPrimary</item>
     </style>
 
 </resources>

@@ -16,6 +16,7 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:tint="@color/white"
+        android:transitionName="@string/transition_profile_image"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -28,6 +29,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Menu"
         android:textSize="14sp"
         android:textStyle="bold"
+        android:transitionName="@string/transition_name"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/profileImageView"

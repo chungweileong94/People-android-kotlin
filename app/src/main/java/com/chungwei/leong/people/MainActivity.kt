@@ -1,15 +1,19 @@
 package com.chungwei.leong.people
 
+import android.app.ActivityOptions
 import android.content.Intent
 import android.database.Cursor
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
+import android.view.View
+import android.util.Pair as UtilPair
 import com.chungwei.leong.people.adapters.MainViewPagerAdapter
 import com.chungwei.leong.people.fragments.ContactsFragment
 import com.chungwei.leong.people.utils.getStringValue
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.contact_list_item.view.*
 
 class MainActivity : AppCompatActivity(), ContactsFragment.OnContactItemClickListener {
 
@@ -48,15 +52,20 @@ class MainActivity : AppCompatActivity(), ContactsFragment.OnContactItemClickLis
         }
     }
 
-    override fun onContactItemClicked(cursor: Cursor, position: Int) {
+    override fun onContactItemClicked(cursor: Cursor, view: View, position: Int) {
         cursor.moveToPosition(position)
         val bundle = Bundle()
         bundle.putString("lookup_key", cursor.getStringValue(ContactsContract.Contacts.LOOKUP_KEY))
         bundle.putString("name", cursor.getStringValue(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY))
-        bundle.putString("photo_uri", cursor.getStringValue(ContactsContract.Contacts.PHOTO_THUMBNAIL_URI))
+        bundle.putString("photo_uri", cursor.getStringValue(ContactsContract.Contacts.PHOTO_URI))
 
         val intent = Intent(this, ContactActivity::class.java)
         intent.putExtra("contact", bundle)
-        startActivity(intent)
+
+        val options = ActivityOptions.makeSceneTransitionAnimation(
+                this,
+                UtilPair.create(view.profileImageView as View, resources.getString(R.string.transition_profile_image)),
+                UtilPair.create(view.nameTextView as View, resources.getString(R.string.transition_name)))
+        startActivity(intent, options.toBundle())
     }
 }

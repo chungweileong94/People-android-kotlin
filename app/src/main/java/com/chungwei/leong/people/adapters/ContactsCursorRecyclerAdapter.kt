@@ -14,7 +14,7 @@ import com.chungwei.leong.people.utils.getStringValue
 import com.simplecityapps.recyclerview_fastscroll.views.FastScrollRecyclerView
 import kotlinx.android.synthetic.main.contact_list_item.view.*
 
-class ContactsCursorRecyclerAdapter(private val context: Context, private val cursor: Cursor, private val onClickListener: (Int) -> Unit) : RecyclerView.Adapter<ContactsCursorRecyclerAdapter.ViewHolder>(), FastScrollRecyclerView.SectionedAdapter {
+class ContactsCursorRecyclerAdapter(private val context: Context, private val cursor: Cursor, private val onClickListener: (View, Int) -> Unit) : RecyclerView.Adapter<ContactsCursorRecyclerAdapter.ViewHolder>(), FastScrollRecyclerView.SectionedAdapter {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder =
             ViewHolder(LayoutInflater.from(context).inflate(R.layout.contact_list_item, parent, false), onClickListener)
@@ -31,7 +31,7 @@ class ContactsCursorRecyclerAdapter(private val context: Context, private val cu
         return cursor.getStringValue(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY)!!.substring(0, 1).toUpperCase()
     }
 
-    class ViewHolder(itemView: View?, private val onClickListener: (Int) -> Unit) : RecyclerView.ViewHolder(itemView) {
+    class ViewHolder(itemView: View?, private val onClickListener: (View, Int) -> Unit) : RecyclerView.ViewHolder(itemView) {
         fun bind(cursor: Cursor) {
             itemView.nameTextView.text = cursor.getStringValue(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY)
 
@@ -40,7 +40,7 @@ class ContactsCursorRecyclerAdapter(private val context: Context, private val cu
                     .load(if (photoUriString.isNullOrEmpty()) R.drawable.ic_person_120dp else Uri.parse(photoUriString))
                     .into(itemView.profileImageView)
 
-            itemView.setOnClickListener { onClickListener(adapterPosition) }
+            itemView.setOnClickListener { onClickListener(itemView, adapterPosition) }
         }
     }
 }
