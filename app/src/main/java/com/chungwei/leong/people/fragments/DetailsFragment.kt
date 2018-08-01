@@ -20,7 +20,7 @@ class DetailsFragment : Fragment() {
         view.nameTextView.text = arguments?.getString("name")
         val photoUriString = arguments?.getString("photo_uri")
         Glide.with(view)
-                .load(if (photoUriString.isNullOrEmpty()) R.drawable.ic_person_120dp else Uri.parse(photoUriString))
+                .load(if (photoUriString.isNullOrEmpty()) R.drawable.ic_person_150dp else Uri.parse(photoUriString))
                 .into(view.profileImageView)
 
         return view

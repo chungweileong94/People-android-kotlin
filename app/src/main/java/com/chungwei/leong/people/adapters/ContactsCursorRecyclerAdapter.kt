@@ -31,13 +31,13 @@ class ContactsCursorRecyclerAdapter(private val context: Context, private val cu
         return cursor.getStringValue(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY)!!.substring(0, 1).toUpperCase()
     }
 
-    class ViewHolder(itemView: View?, private val onClickListener: (View, Int) -> Unit) : RecyclerView.ViewHolder(itemView) {
+    class ViewHolder(itemView: View, private val onClickListener: (View, Int) -> Unit) : RecyclerView.ViewHolder(itemView) {
         fun bind(cursor: Cursor) {
             itemView.nameTextView.text = cursor.getStringValue(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY)
 
             val photoUriString = cursor.getStringValue(ContactsContract.Contacts.PHOTO_THUMBNAIL_URI)
             Glide.with(itemView)
-                    .load(if (photoUriString.isNullOrEmpty()) R.drawable.ic_person_120dp else Uri.parse(photoUriString))
+                    .load(if (photoUriString.isNullOrEmpty()) R.drawable.ic_person_150dp else Uri.parse(photoUriString))
                     .into(itemView.profileImageView)
 
             itemView.setOnClickListener { onClickListener(itemView, adapterPosition) }
