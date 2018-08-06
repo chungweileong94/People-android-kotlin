@@ -14,12 +14,15 @@ import com.chungwei.leong.people.utils.getStringValue
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     private var mLoadContactsAsyncTask: LoadContactsAsyncTask? = null
-    private var contacts: MutableLiveData<ArrayList<Contact>> = MutableLiveData()
+    private var contacts: MutableLiveData<ArrayList<Contact>>? = null
     private var selectedContact: MutableLiveData<Contact> = MutableLiveData()
 
     fun getContacts(): LiveData<ArrayList<Contact>> {
-        loadContacts()
-        return contacts
+        if (contacts == null) {
+            contacts = MutableLiveData()
+            loadContacts()
+        }
+        return contacts as MutableLiveData<ArrayList<Contact>>
     }
 
     fun getSelectedContact(): LiveData<Contact> = selectedContact
@@ -29,8 +32,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun loadContacts(query: String = "") {
+        if (mLoadContactsAsyncTask?.status == AsyncTask.Status.RUNNING) mLoadContactsAsyncTask?.cancel(true)
         mLoadContactsAsyncTask = LoadContactsAsyncTask()
-        if (mLoadContactsAsyncTask!!.status == AsyncTask.Status.RUNNING) mLoadContactsAsyncTask!!.cancel(true)
         mLoadContactsAsyncTask!!.execute(query)
     }
 
