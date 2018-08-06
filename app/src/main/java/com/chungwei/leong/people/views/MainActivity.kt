@@ -1,4 +1,4 @@
-package com.chungwei.leong.people
+package com.chungwei.leong.people.views
 
 import android.app.ActivityOptions
 import android.arch.lifecycle.Observer
@@ -8,8 +8,9 @@ import android.os.Bundle
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.view.View
+import com.chungwei.leong.people.R
 import com.chungwei.leong.people.adapters.MainViewPagerAdapter
-import com.chungwei.leong.people.fragments.ContactsFragment
+import com.chungwei.leong.people.views.fragments.ContactsFragment
 import com.chungwei.leong.people.models.Contact
 import com.chungwei.leong.people.viewModels.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*

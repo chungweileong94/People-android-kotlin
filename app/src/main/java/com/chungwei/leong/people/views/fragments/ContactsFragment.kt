@@ -1,4 +1,4 @@
-package com.chungwei.leong.people.fragments
+package com.chungwei.leong.people.views.fragments
 
 import android.Manifest
 import android.arch.lifecycle.Observer

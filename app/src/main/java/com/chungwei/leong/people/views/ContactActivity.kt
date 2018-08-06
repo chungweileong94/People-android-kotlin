@@ -1,10 +1,11 @@
-package com.chungwei.leong.people
+package com.chungwei.leong.people.views
 
 import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.MenuItem
 import com.bumptech.glide.Glide
+import com.chungwei.leong.people.R
 import kotlinx.android.synthetic.main.activity_contact.*
 
 class ContactActivity : AppCompatActivity() {
