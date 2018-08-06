@@ -33,7 +33,7 @@ class ContactsCursorRecyclerAdapter(private val context: Context, private val co
 
             val photoUriString = contact.photoThumbnailUri
             Glide.with(itemView)
-                    .load(if (photoUriString.isNullOrEmpty()) R.drawable.ic_person_150dp else Uri.parse(photoUriString))
+                    .load(if (photoUriString.isNullOrEmpty()) R.drawable.ic_person_24dp else Uri.parse(photoUriString))
                     .into(itemView.profileImageView)
 
             itemView.setOnClickListener { onClickListener(itemView, contact) }
