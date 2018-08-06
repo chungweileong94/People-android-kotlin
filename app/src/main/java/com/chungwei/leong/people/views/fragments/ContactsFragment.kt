@@ -1,13 +1,11 @@
-package com.chungwei.leong.people.fragments
+package com.chungwei.leong.people.views.fragments
 
 import android.Manifest
-import android.annotation.SuppressLint
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.pm.PackageManager
-import android.database.Cursor
-import android.os.AsyncTask
 import android.os.Bundle
-import android.provider.ContactsContract
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat.checkSelfPermission
 import android.support.v7.widget.LinearLayoutManager
@@ -16,17 +14,17 @@ import android.view.*
 import com.chungwei.leong.people.R
 import com.chungwei.leong.people.adapters.ContactsCursorRecyclerAdapter
 import com.chungwei.leong.people.utils.PermissionRequestCode
+import com.chungwei.leong.people.viewModels.MainViewModel
 import kotlinx.android.synthetic.main.fragment_contacts.*
 import kotlinx.android.synthetic.main.fragment_contacts.view.*
 
 class ContactsFragment : Fragment() {
 
-    private val mContactAsyncTask = ContactsAsyncTask()
-
+    private lateinit var mViewModel: MainViewModel
     private lateinit var mContactItemClickCallback: OnContactItemClickListener
 
     interface OnContactItemClickListener {
-        fun onContactItemClicked(cursor: Cursor, view: View, position: Int)
+        fun onContactItemClicked(view: View)
     }
 
     override fun onAttach(context: Context) {
@@ -43,15 +41,11 @@ class ContactsFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_contacts, container, false)
         view.contactsRecyclerView.layoutManager = LinearLayoutManager(context!!)
         view.contactsRecyclerView.setHasFixedSize(true)
+        view.contactsRecyclerView.setItemViewCacheSize(50)
 
         setHasOptionsMenu(true)
 
         return view
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        mContactAsyncTask.cancel(true)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -60,7 +54,7 @@ class ContactsFragment : Fragment() {
         if (checkSelfPermission(context!!, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(arrayOf(Manifest.permission.READ_CONTACTS), PermissionRequestCode.READ_CONTACT.code)
         } else {
-            getContacts()
+            setupViewModel()
         }
     }
 
@@ -70,7 +64,7 @@ class ContactsFragment : Fragment() {
         when (requestCode) {
             PermissionRequestCode.READ_CONTACT.code ->
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    getContacts()
+                    setupViewModel()
                 }
         }
     }
@@ -81,45 +75,23 @@ class ContactsFragment : Fragment() {
 
         searchView?.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean = true
-            override fun onQueryTextChange(newText: String?): Boolean = getContacts(newText.toString())
+            override fun onQueryTextChange(newText: String?): Boolean = searchContacts(newText.toString())
         })
     }
 
-    private fun getContacts(searchTerm: String = ""): Boolean {
-        if (mContactAsyncTask.status != AsyncTask.Status.FINISHED) mContactAsyncTask.cancel(true)
-        ContactsAsyncTask().execute(searchTerm.trim())
+    private fun setupViewModel(): Boolean {
+        mViewModel = ViewModelProviders.of(activity!!).get(MainViewModel::class.java)
+        mViewModel.getContacts().observe(this, Observer {
+            contactsRecyclerView.adapter = ContactsCursorRecyclerAdapter(context!!, it!!) { view, contact ->
+                mViewModel.selectContact(contact)
+                mContactItemClickCallback.onContactItemClicked(view)
+            }
+        })
         return true
     }
 
-    @SuppressLint("StaticFieldLeak")
-    inner class ContactsAsyncTask : AsyncTask<String, Void, Cursor>() {
-
-        private val mProjection = arrayOf(
-                ContactsContract.Contacts._ID,
-                ContactsContract.Contacts.LOOKUP_KEY,
-                ContactsContract.Contacts.DISPLAY_NAME_PRIMARY,
-                ContactsContract.Contacts.PHOTO_URI,
-                ContactsContract.Contacts.PHOTO_THUMBNAIL_URI)
-        private val mSelection = "${ContactsContract.Contacts.DISPLAY_NAME_PRIMARY} LIKE ?"
-        private var mSortOrder = "${ContactsContract.Contacts.DISPLAY_NAME_PRIMARY} ASC"
-
-        override fun doInBackground(vararg params: String?): Cursor? =
-                if (isCancelled) null else context?.contentResolver?.query(
-                        ContactsContract.Contacts.CONTENT_URI,
-                        mProjection,
-                        mSelection,
-                        arrayOf("%${params[0]}%"),
-                        mSortOrder)
-
-
-        override fun onPostExecute(result: Cursor?) {
-            super.onPostExecute(result)
-
-            if (result != null) {
-                contactsRecyclerView.adapter = ContactsCursorRecyclerAdapter(context!!, result) { view, position ->
-                    mContactItemClickCallback.onContactItemClicked(result, view, position)
-                }
-            }
-        }
+    private fun searchContacts(searchTerm: String = ""): Boolean {
+        mViewModel.loadContacts(searchTerm.trim())
+        return true
     }
 }

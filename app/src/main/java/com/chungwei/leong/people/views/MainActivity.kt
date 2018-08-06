@@ -1,23 +1,26 @@
-package com.chungwei.leong.people
+package com.chungwei.leong.people.views
 
 import android.app.ActivityOptions
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
-import android.database.Cursor
 import android.os.Bundle
-import android.provider.ContactsContract
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.view.View
-import android.util.Pair as UtilPair
+import com.chungwei.leong.people.R
 import com.chungwei.leong.people.adapters.MainViewPagerAdapter
-import com.chungwei.leong.people.fragments.ContactsFragment
-import com.chungwei.leong.people.utils.getStringValue
+import com.chungwei.leong.people.views.fragments.ContactsFragment
+import com.chungwei.leong.people.models.Contact
+import com.chungwei.leong.people.viewModels.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.contact_list_item.view.*
+import android.util.Pair as UtilPair
 
 class MainActivity : AppCompatActivity(), ContactsFragment.OnContactItemClickListener {
 
     private lateinit var mViewPagerAdapter: MainViewPagerAdapter
+    private var mSelectedContact: Contact? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,14 +53,18 @@ class MainActivity : AppCompatActivity(), ContactsFragment.OnContactItemClickLis
                 else -> false
             }
         }
+
+        val viewModel = ViewModelProviders.of(this).get(MainViewModel::class.java)
+        viewModel.getSelectedContact().observe(this, Observer {
+            mSelectedContact = it
+        })
     }
 
-    override fun onContactItemClicked(cursor: Cursor, view: View, position: Int) {
-        cursor.moveToPosition(position)
+    override fun onContactItemClicked(view: View) {
         val bundle = Bundle()
-        bundle.putString("lookup_key", cursor.getStringValue(ContactsContract.Contacts.LOOKUP_KEY))
-        bundle.putString("name", cursor.getStringValue(ContactsContract.Contacts.DISPLAY_NAME_PRIMARY))
-        bundle.putString("photo_uri", cursor.getStringValue(ContactsContract.Contacts.PHOTO_URI))
+        bundle.putString("lookup_key", mSelectedContact?.lookupKey)
+        bundle.putString("name", mSelectedContact?.name)
+        bundle.putString("photo_uri", mSelectedContact?.photoUri)
 
         val intent = Intent(this, ContactActivity::class.java)
         intent.putExtra("contact", bundle)

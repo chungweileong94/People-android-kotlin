@@ -12,8 +12,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
-            android:launchMode="singleTop">s
+            android:name=".views.MainActivity"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -21,8 +21,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ContactActivity"
-            android:parentActivityName=".MainActivity" />
+            android:name=".views.ContactActivity"
+            android:parentActivityName=".views.MainActivity" />
     </application>
 
 </manifest>
