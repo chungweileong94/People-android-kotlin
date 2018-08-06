@@ -13,7 +13,6 @@ import android.support.v7.widget.SearchView
 import android.view.*
 import com.chungwei.leong.people.R
 import com.chungwei.leong.people.adapters.ContactsCursorRecyclerAdapter
-import com.chungwei.leong.people.models.Contact
 import com.chungwei.leong.people.utils.PermissionRequestCode
 import com.chungwei.leong.people.viewModels.MainViewModel
 import kotlinx.android.synthetic.main.fragment_contacts.*
@@ -25,7 +24,7 @@ class ContactsFragment : Fragment() {
     private lateinit var mContactItemClickCallback: OnContactItemClickListener
 
     interface OnContactItemClickListener {
-        fun onContactItemClicked(contact: Contact, view: View)
+        fun onContactItemClicked(view: View)
     }
 
     override fun onAttach(context: Context) {
@@ -42,6 +41,7 @@ class ContactsFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_contacts, container, false)
         view.contactsRecyclerView.layoutManager = LinearLayoutManager(context!!)
         view.contactsRecyclerView.setHasFixedSize(true)
+        view.contactsRecyclerView.setItemViewCacheSize(50)
 
         setHasOptionsMenu(true)
 
@@ -81,9 +81,10 @@ class ContactsFragment : Fragment() {
 
     private fun setupViewModel(): Boolean {
         mViewModel = ViewModelProviders.of(activity!!).get(MainViewModel::class.java)
-        mViewModel.getContacts().observe(this, Observer<ArrayList<Contact>> {
+        mViewModel.getContacts().observe(this, Observer {
             contactsRecyclerView.adapter = ContactsCursorRecyclerAdapter(context!!, it!!) { view, contact ->
-                mContactItemClickCallback.onContactItemClicked(contact, view)
+                mViewModel.selectContact(contact)
+                mContactItemClickCallback.onContactItemClicked(view)
             }
         })
         return true
