@@ -12,7 +12,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.SearchView
 import android.view.*
 import com.chungwei.leong.people.R
-import com.chungwei.leong.people.adapters.ContactsCursorRecyclerAdapter
+import com.chungwei.leong.people.adapters.ContactsRecyclerListAdapter
 import com.chungwei.leong.people.utils.PermissionRequestCode
 import com.chungwei.leong.people.viewModels.MainViewModel
 import kotlinx.android.synthetic.main.fragment_contacts.*
@@ -82,7 +82,7 @@ class ContactsFragment : Fragment() {
     private fun setupViewModel(): Boolean {
         mViewModel = ViewModelProviders.of(activity!!).get(MainViewModel::class.java)
         mViewModel.getContacts().observe(this, Observer {
-            contactsRecyclerView.adapter = ContactsCursorRecyclerAdapter(context!!, it!!) { view, contact ->
+            contactsRecyclerView.adapter = ContactsRecyclerListAdapter(context!!, it!!) { view, contact ->
                 mViewModel.selectContact(contact)
                 mContactItemClickCallback.onContactItemClicked(view)
             }
